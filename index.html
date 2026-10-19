@@ -221,7 +221,7 @@ $('gr').innerHTML=ico('spark',13)+'granted';$('lt').innerHTML=ico('wind',13)+'le
 
 /* ---------- sound ---------- */
 let AC,M;
-function ac(){if(AC)return AC;AC=new(window.AudioContext||window.webkitAudioContext)();M=AC.createGain();M.gain.value=.7;const lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2600;const dl=AC.createDelay();dl.delayTime.value=.18;const fb=AC.createGain();fb.gain.value=.22;M.connect(lp);lp.connect(AC.destination);lp.connect(dl);dl.connect(fb);fb.connect(dl);dl.connect(AC.destination);return AC}
+function ac(){if(AC)return AC;AC=new(window.AudioContext||window.webkitAudioContext)();M=AC.createGain();M.gain.value=1.9;const cp=AC.createDynamicsCompressor();cp.threshold.value=-14;cp.knee.value=12;cp.ratio.value=4;cp.attack.value=.003;cp.release.value=.2;cp.connect(AC.destination);const lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2600;const dl=AC.createDelay();dl.delayTime.value=.18;const fb=AC.createGain();fb.gain.value=.22;M.connect(lp);lp.connect(cp);lp.connect(dl);dl.connect(fb);fb.connect(dl);dl.connect(cp);return AC}
 const r=f=>f*(1+(Math.random()-.5)*.06);
 function tone(f,t0,du,ty,v,atk,to){const a=ac(),o=a.createOscillator(),g=a.createGain(),t=a.currentTime+t0;o.type=ty;o.frequency.setValueAtTime(f,t);if(to)o.frequency.exponentialRampToValueAtTime(to,t+du*.7);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+atk);g.gain.exponentialRampToValueAtTime(.0001,t+du);o.connect(g).connect(M);o.start(t);o.stop(t+du+.05)}
 const pluck=(f,t0,v,du)=>{tone(f,t0,du,'sine',v,.004);tone(f*3,t0,.15,'triangle',v*.12,.003)};
