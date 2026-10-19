@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="background:#EFE7D8">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -12,10 +12,20 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<link rel="preload" href="fonts/dotgothic16.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/375x667@2.png">
+<link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/414x896@2.png">
+<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/375x812@3.png">
+<link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/414x896@3.png">
+<link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/390x844@3.png">
+<link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/428x926@3.png">
+<link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/393x852@3.png">
+<link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/430x932@3.png">
+<link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/402x874@3.png">
+<link rel="apple-touch-startup-image" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/440x956@3.png">
+<link rel="apple-touch-startup-image" media="(device-width: 420px) and (device-height: 912px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/420x912@3.png">
 <style>
+@font-face{font-family:"DotGothic16";src:url("fonts/dotgothic16.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
 /* layout: one screen, pixel wordmark header, collection block, drifting aura carousel; overlays slide over it */
 :root{
   --bg:#EFE7D8; --fg:#221D19; --mut:#857C6F; --acc:#7A2E2A; --ln:#D3C7B2; --gold:#B08A3A;
@@ -277,7 +287,7 @@ function logo(el,cs,anim){el.innerHTML='';const P=[];let ox=0;[...'wish.exe'].fo
   const frag=document.createDocumentFragment();
   [['var(--fg)',0,'p1']].forEach(([c0,o,cls])=>P.forEach(([x,y,dot])=>{const c=dot?'var(--acc)':c0;const s=document.createElement('span');if(anim){s.className=cls;s.style.animationDelay=(Math.random()*600)+'ms';s.style.setProperty('--x',(Math.random()-.5)*80+'px');s.style.setProperty('--y',(Math.random()-.5)*80+'px')}s.style.cssText+=`;position:absolute;width:${cs}px;height:${cs}px;left:${x*cs+o}px;top:${y*cs+o}px;background:${c}`;frag.appendChild(s)}));el.appendChild(frag)}
 const spl=$('spl'),lg=$('lg'),lgw=$('lgw'),hl=$('hl');
-logo(hl,3,0);logo(lg,6,1);lgw.style.marginLeft=-(parseFloat(lg.style.width)/2)+'px';
+logo(hl,3,0);logo(lg,6,0);lgw.style.marginLeft=-(parseFloat(lg.style.width)/2)+'px';
 spl.addEventListener('click',()=>{if(spl.dataset.b)return;spl.dataset.b=1;try{ac()}catch(e){}sfx('intro');lg.querySelectorAll('span').forEach(x=>{x.style.animation='none'});spl.querySelectorAll('.dt').forEach(d=>d.style.opacity=0);
   const a=lgw.getBoundingClientRect(),b=hl.getBoundingClientRect();lgw.style.willChange='transform';
   const an=lgw.animate([{transform:'none'},{transform:`translate(${b.left-a.left}px,${b.top-a.top}px) scale(.5)`}],{duration:950,delay:80,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});
