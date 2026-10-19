@@ -28,7 +28,8 @@ html,body{height:100%;margin:0}
 html{background:var(--bg)}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:var(--px);overflow:hidden;-webkit-tap-highlight-color:transparent;transition:background .6s,color .6s}
-#app{position:relative;height:100%;padding-top:env(safe-area-inset-top,0px);max-width:480px;margin:0 auto;display:flex;flex-direction:column;overflow:hidden;user-select:none;-webkit-user-select:none}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:60}
+#app{position:relative;height:100%;padding-top:calc(env(safe-area-inset-top,0px) + 10px);max-width:480px;margin:0 auto;display:flex;flex-direction:column;overflow:hidden;user-select:none;-webkit-user-select:none}
 .dt{font-size:11px;letter-spacing:2px;color:var(--mut)}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
 :focus-visible{outline:2px dashed var(--acc);outline-offset:3px}
@@ -37,12 +38,12 @@ svg.i{display:block;flex:none}
 #hl{position:relative;opacity:0}
 .pb{width:36px;height:36px;border:2px solid var(--fg);box-shadow:3px 3px 0 var(--fg);display:flex;align-items:center;justify-content:center;transition:transform .1s,box-shadow .1s}
 .pb:active,.bt:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--fg)}
-.pb svg{transition:transform .35s steps(3)}
+.pb svg{transition:transform .28s cubic-bezier(.2,.9,.3,1.25)}
 .pb.o svg{transform:rotate(45deg)}
 #ct{padding:8px var(--gr) 0 var(--g);min-height:22px}
 .blk{padding:20px var(--gr) 0 var(--g)}
-#tt{font-size:20px;letter-spacing:1px;color:var(--acc);display:inline-flex;align-items:center;gap:8px;max-width:100%}
-#tn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tt{font-size:20px;letter-spacing:1px;color:var(--acc);display:inline-flex;align-items:center;gap:8px;max-width:100%;line-height:1.35}
+#tn{white-space:normal;overflow-wrap:anywhere;text-wrap:balance;text-align:left}
 #chv{color:var(--mut);transition:transform .3s steps(3)}
 #cdn{margin-top:3px;color:var(--fg)}
 .bar{position:relative;height:12px;border:2px solid var(--fg);margin-top:5px;overflow:hidden}
@@ -58,7 +59,7 @@ svg.i{display:block;flex:none}
 .sc{overflow-x:auto;scrollbar-width:none;padding:8px 0 4px;touch-action:pan-x}
 .row{display:flex;width:max-content}
 .it{width:140px;flex:none;text-align:center}
-.it .dt{padding:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.it .dt{padding:0 10px;white-space:normal;overflow-wrap:anywhere;line-height:1.5}
 .au{position:relative;width:140px;height:140px;display:flex;align-items:center;justify-content:center;margin:0 auto;color:var(--mut)}
 .au::before{content:'';position:absolute;inset:4px;border-radius:50%;background:radial-gradient(circle,var(--h) 0%,var(--h) 22%,transparent 70%);filter:blur(8px);animation:br 6s ease-in-out infinite;animation-delay:var(--d,0s);transition:background .8s}
 .au.ok::before{--h:rgba(217,183,106,.8)}
@@ -78,7 +79,7 @@ svg.i{display:block;flex:none}
 .hint{text-align:center;padding:10px 16px calc(18px + env(safe-area-inset-bottom,0px))}
 .gl{background:color-mix(in srgb,var(--bg) 55%,transparent);-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px)}
 .box{border:2px solid var(--fg);box-shadow:0 0 0 2px var(--bg),0 0 0 3.5px var(--fg);background:var(--bg)}
-.pop{position:absolute;z-index:5;padding:6px;transform:scale(.6);opacity:0;pointer-events:none;transition:all .3s steps(4)}
+.pop{position:absolute;z-index:5;padding:6px;transform:translateY(-6px) scale(.94);opacity:0;pointer-events:none;transition:transform .24s cubic-bezier(.2,.9,.3,1.15),opacity .18s ease;will-change:transform,opacity}
 .pop.o{transform:none;opacity:1;pointer-events:auto}
 .pop button{display:flex;gap:8px;align-items:center;width:100%;padding:10px 8px;font-size:12px;letter-spacing:1px;text-align:left}
 .pop button::before{content:'▸';opacity:0;color:var(--acc)}
@@ -129,9 +130,9 @@ textarea.in{resize:none;line-height:1.5}
 .spl{position:absolute;inset:0;z-index:50;background:var(--bg);cursor:pointer}
 .spl .dt{position:absolute;left:0;right:0;text-align:center;transition:opacity .3s}
 .lgw{position:absolute;z-index:51;left:50%;top:36%;transform-origin:0 0;pointer-events:none}
-.lg{position:relative;animation:gl 4s steps(1) infinite 2.5s}
+.lg{position:relative}
 @keyframes gl{0%,92%,100%{transform:none}94%{transform:translateX(4px)}96%{transform:translateX(-3px)}}
-.p1{animation:pin .55s steps(4) both}
+.p1{animation:pin .7s cubic-bezier(.2,.8,.3,1) both}
 @keyframes pin{from{opacity:0;transform:translate(var(--x),var(--y))}}
 .p2{animation:fd .3s steps(2) both}
 @keyframes fd{from{opacity:0}}
@@ -153,7 +154,7 @@ textarea.in{resize:none;line-height:1.5}
     <button class="pb" id="pb" aria-label="Add and settings" aria-expanded="false"></button>
   </div>
   <div class="dt" id="ct"></div>
-  <div class="pop box gl" id="mn">
+  <div class="pop box" id="mn">
     <button data-m="add">add a wish</button>
     <button data-m="new">new collection</button>
     <button data-m="edit" id="medit">edit collection</button>
@@ -170,7 +171,7 @@ textarea.in{resize:none;line-height:1.5}
     </div>
     <div class="chips" id="chips"></div>
   </div>
-  <div class="pop box gl" id="cl"></div>
+  <div class="pop box" id="cl"></div>
 
   <div class="stage"><div class="sc" id="sc"><div class="row" id="row"></div></div></div>
   <div class="dt hint">touch to wander · tap to open</div>
@@ -191,7 +192,7 @@ textarea.in{resize:none;line-height:1.5}
       <label class="lbl" for="f_brand">brand ▸</label><input class="in" id="f_brand" placeholder="kiyomizu-yaki studio" autocomplete="off">
       <label class="lbl" for="f_where">where ▸</label><input class="in" id="f_where" placeholder="gojozaka, kyoto · or online" autocomplete="off">
       <label class="lbl" for="f_link">link ▸</label><input class="in" id="f_link" placeholder="etsy.com/listing/…" autocomplete="off" inputmode="url">
-      <label class="lbl" for="f_price">price ▸ €</label><input class="in" id="f_price" placeholder="45" inputmode="numeric" autocomplete="off">
+      <label class="lbl" for="f_price">price ▸ €</label><input class="in" id="f_price" placeholder="6.75" inputmode="decimal" autocomplete="off">
       <label class="lbl" for="f_notes">notes ▸</label><textarea class="in" id="f_notes" rows="3" placeholder="the oxblood glaze one"></textarea>
     </div>
     <div class="f dt" id="ad" style="text-align:center;margin-top:18px;transition-delay:.28s"></div>
@@ -272,24 +273,24 @@ h:["100000","100000","100000","101110","110001","100001","100001","100001","1000
 '.':["00","00","00","00","00","00","00","00","11","11"],
 e:["000000","000000","000000","011110","100001","100001","111111","100000","100001","011110"],
 x:["0000000","0000000","0000000","1000001","0100010","0010100","0001000","0010100","0100010","1000001"]};
-function logo(el,cs,anim){el.innerHTML='';const P=[];let ox=0;[...'wish.exe'].forEach(ch=>{L[ch].forEach((row,y)=>[...row].forEach((v,x)=>{if(v==='1')P.push([ox+x,y])}));ox+=L[ch][0].length+1});el.style.width=((ox-1)*cs+cs)+'px';el.style.height=(11*cs)+'px';
+function logo(el,cs,anim){el.innerHTML='';const P=[];let ox=0;[...'wish.exe'].forEach(ch=>{L[ch].forEach((row,y)=>[...row].forEach((v,x)=>{if(v==='1')P.push([ox+x,y,ch==='.'])}));ox+=L[ch][0].length+1});el.style.width=((ox-1)*cs+cs)+'px';el.style.height=(11*cs)+'px';
   const frag=document.createDocumentFragment();
-  [['color-mix(in srgb,var(--acc) 50%,transparent)',cs,'p2'],['var(--fg)',0,'p1']].forEach(([c,o,cls])=>P.forEach(([x,y])=>{const s=document.createElement('span');if(anim){s.className=cls;s.style.animationDelay=(o?850+Math.random()*250:Math.random()*700)+'ms';s.style.setProperty('--x',(Math.random()-.5)*80+'px');s.style.setProperty('--y',(Math.random()-.5)*80+'px')}s.style.cssText+=`;position:absolute;width:${cs}px;height:${cs}px;left:${x*cs+o}px;top:${y*cs+o}px;background:${c}`;frag.appendChild(s)}));el.appendChild(frag)}
+  [['var(--fg)',0,'p1']].forEach(([c0,o,cls])=>P.forEach(([x,y,dot])=>{const c=dot?'var(--acc)':c0;const s=document.createElement('span');if(anim){s.className=cls;s.style.animationDelay=(Math.random()*600)+'ms';s.style.setProperty('--x',(Math.random()-.5)*80+'px');s.style.setProperty('--y',(Math.random()-.5)*80+'px')}s.style.cssText+=`;position:absolute;width:${cs}px;height:${cs}px;left:${x*cs+o}px;top:${y*cs+o}px;background:${c}`;frag.appendChild(s)}));el.appendChild(frag)}
 const spl=$('spl'),lg=$('lg'),lgw=$('lgw'),hl=$('hl');
 logo(hl,3,0);logo(lg,6,1);lgw.style.marginLeft=-(parseFloat(lg.style.width)/2)+'px';
-spl.addEventListener('click',()=>{if(spl.dataset.b)return;spl.dataset.b=1;try{ac()}catch(e){}sfx('intro');lg.style.animation='none';spl.querySelectorAll('.dt').forEach(d=>d.style.opacity=0);
-  const a=lgw.getBoundingClientRect(),b=hl.getBoundingClientRect();
-  const an=lgw.animate([{transform:'none'},{transform:`translate(${b.left-a.left}px,${b.top-a.top}px) scale(.5)`}],{duration:1100,delay:150,easing:'cubic-bezier(.65,0,.35,1)',fill:'forwards'});
-  spl.animate([{opacity:1},{opacity:0}],{duration:900,delay:350,easing:'ease-in-out',fill:'forwards'});
-  an.onfinish=()=>{hl.style.opacity=1;lgw.hidden=true;spl.hidden=true}});
+spl.addEventListener('click',()=>{if(spl.dataset.b)return;spl.dataset.b=1;try{ac()}catch(e){}sfx('intro');lg.querySelectorAll('span').forEach(x=>{x.style.animation='none'});spl.querySelectorAll('.dt').forEach(d=>d.style.opacity=0);
+  const a=lgw.getBoundingClientRect(),b=hl.getBoundingClientRect();lgw.style.willChange='transform';
+  const an=lgw.animate([{transform:'none'},{transform:`translate(${b.left-a.left}px,${b.top-a.top}px) scale(.5)`}],{duration:950,delay:80,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});
+  spl.animate([{opacity:1},{opacity:0}],{duration:700,delay:180,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
+  an.onfinish=()=>{hl.style.opacity=1;lgw.animate([{opacity:1},{opacity:0}],{duration:140,fill:'forwards'}).onfinish=()=>{lgw.hidden=true;spl.hidden=true}}});
 
 /* ---------- helpers ---------- */
-const eur=n=>'€'+Math.round(n).toLocaleString('en');
+const eur=n=>{n=Math.round((+n||0)*100)/100;return '€'+n.toLocaleString('en',{minimumFractionDigits:n%1?2:0,maximumFractionDigits:2})};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const srcOf=it=>it.imgKey?(URLS[it.imgKey]||''):(it.src||'');
 function media(it,size){const s=srcOf(it);if(!s)return ico('spark',size*.3);return it.cut?`<img class="cut" src="${esc(s)}" alt="" style="width:${size*.78}px;height:${size*.78}px">`:`<img class="soft" src="${esc(s)}" alt="" style="width:${size*.62}px;height:${size*.62}px">`}
 const tagsOf=c=>[...new Set(c.it.map(i=>i.tag).filter(Boolean))];
-const num=v=>+String(v||'').replace(/[^\d]/g,'')||0;
+const num=v=>{const x=parseFloat(String(v||'').replace(',','.').replace(/[^\d.]/g,''));return isFinite(x)?Math.round(x*100)/100:0};
 
 /* ---------- render ---------- */
 const row=$('row'),sc=$('sc');
@@ -383,7 +384,7 @@ const fmt=t=>{if(!t)return'';const d=new Date(t);return`${String(d.getDate()).pa
 const parseD=v=>{if(!v)return null;const m=v.match(/^(\d{2})\/(\d{2})\/(\d{2})$/);if(!m)return undefined;const d=new Date(2000+ +m[3],m[2]-1,+m[1]);return isNaN(d)||d.getDate()!==+m[1]?undefined:d.getTime()};
 function shelf(){const c=C(),tot=c.gr.reduce((s,g)=>s+(+g.price||0),0);
   show(`<div class="st">granted shelf</div><div class="dt" style="margin-bottom:12px">wishes that came true · ${esc(c.n.toLowerCase())}${tot?' · '+eur(tot):''}</div>`+
-  c.gr.map(g=>`<div class="shelf"><div class="au ok">${srcOf(g)?`<img class="${g.cut?'cut':'soft'}" src="${esc(srcOf(g))}" alt="" style="width:34px;height:34px">`:ico('spark',16)}</div><div style="flex:1;min-width:0"><div style="font-size:13px;letter-spacing:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(g.nm.toLowerCase())}</div><div class="dt">${esc(g.tag||'no tag')}${g.gat?' · '+new Date(g.gat).toLocaleDateString('en-GB',{day:'numeric',month:'short'}).toLowerCase():''}</div></div><span class="dt">${g.price?eur(g.price):''}</span></div>`).join(''))}
+  c.gr.map(g=>`<div class="shelf"><div class="au ok">${srcOf(g)?`<img class="${g.cut?'cut':'soft'}" src="${esc(srcOf(g))}" alt="" style="width:34px;height:34px">`:ico('spark',16)}</div><div style="flex:1;min-width:0"><div style="font-size:13px;letter-spacing:1px;overflow-wrap:anywhere">${esc(g.nm.toLowerCase())}</div><div class="dt">${esc(g.tag||'no tag')}${g.gat?' · '+new Date(g.gat).toLocaleDateString('en-GB',{day:'numeric',month:'short'}).toLowerCase():''}</div></div><span class="dt">${g.price?eur(g.price):''}</span></div>`).join(''))}
 const colFields=c=>`<label class="lbl" for="n1">name ▸</label><input class="in" id="n1" placeholder="tokyo vintage" value="${c?esc(c.n):''}" autocomplete="off">
   <div class="two"><div><label class="lbl" for="n2">budget ▸ €</label><input class="in" id="n2" inputmode="numeric" placeholder="optional" value="${c&&c.budget?c.budget:''}" autocomplete="off"></div>
   <div><label class="lbl" for="n3">countdown ▸</label><input class="in" id="n3" inputmode="numeric" placeholder="dd/mm/yy" maxlength="8" value="${c?fmt(c.date):''}" autocomplete="off"></div></div><div class="dt er"></div>`;
@@ -406,21 +407,23 @@ function editCol(c){show(`<div class="st">edit collection</div><div class="dt" s
 
 /* ---------- photo → cut-out ---------- */
 function loadImg(src){return new Promise((ok,no)=>{const g=new Image();g.onload=()=>ok(g);g.onerror=no;g.src=src})}
-function lift(d,w,h){const n=w*h,rgb=i=>[d[i*4],d[i*4+1],d[i*4+2]];
+function lift(d,w,h){const n=w*h;
   const B=[];for(let x=0;x<w;x+=2){B.push(x,(h-1)*w+x)}for(let y=0;y<h;y+=2){B.push(y*w,y*w+w-1)}
   let mr=0,mg=0,mb=0;B.forEach(i=>{mr+=d[i*4];mg+=d[i*4+1];mb+=d[i*4+2]});mr/=B.length;mg/=B.length;mb/=B.length;
   const dist=(i,r2,g2,b2)=>{const a=d[i*4]-r2,b=d[i*4+1]-g2,c=d[i*4+2]-b2;return Math.sqrt(a*a+b*b+c*c)};
-  let spread=0;B.forEach(i=>spread+=dist(i,mr,mg,mb));spread/=B.length;if(spread>38)return null;
-  const T1=30+spread*.7,T2=70,mask=new Uint8Array(n),q=new Int32Array(n);let qt=0,qh=0;
-  for(let x=0;x<w;x++)for(const i of [x,(h-1)*w+x])if(!mask[i]&&dist(i,mr,mg,mb)<T2){mask[i]=1;q[qt++]=i}
-  for(let y=0;y<h;y++)for(const i of [y*w,y*w+w-1])if(!mask[i]&&dist(i,mr,mg,mb)<T2){mask[i]=1;q[qt++]=i}
-  while(qh<qt){const p=q[qh++],x=p%w,pr=d[p*4],pg=d[p*4+1],pbv=d[p*4+2];
-    const nb=[x>0?p-1:-1,x<w-1?p+1:-1,p-w,p+w];
-    for(const m of nb){if(m<0||m>=n||mask[m])continue;const dm=dist(m,mr,mg,mb),dc=dist(m,pr,pg,pbv);if(dm<T1||(dc<9&&dm<T2)){mask[m]=1;q[qt++]=m}}}
-  const frac=qt/n;if(frac<.06||frac>.94)return null;
-  let a=new Float32Array(n);for(let i=0;i<n;i++)a[i]=mask[i]?0:255;
+  let spread=0;B.forEach(i=>spread+=dist(i,mr,mg,mb));spread/=B.length;if(spread>36)return null;
+  const G=new Float32Array(n),pd=(i,j)=>Math.abs(d[i*4]-d[j*4])+Math.abs(d[i*4+1]-d[j*4+1])+Math.abs(d[i*4+2]-d[j*4+2]);
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=y*w+x;let g=0;if(x<w-1)g=Math.max(g,pd(i,i+1));if(y<h-1)g=Math.max(g,pd(i,i+w));if(x>0)g=Math.max(g,pd(i,i-1));if(y>0)g=Math.max(g,pd(i,i-w));G[i]=g}
+  const T1=14+spread*.6,E=22+spread*.5,mask=new Uint8Array(n),q=new Int32Array(n);let qt=0,qh=0;
+  const seed=i=>{if(!mask[i]&&dist(i,mr,mg,mb)<T1+10&&G[i]<E){mask[i]=1;q[qt++]=i}};
+  for(let x=0;x<w;x++){seed(x);seed((h-1)*w+x)}for(let y=0;y<h;y++){seed(y*w);seed(y*w+w-1)}
+  while(qh<qt){const p=q[qh++],x=p%w;const nb=[x>0?p-1:-1,x<w-1?p+1:-1,p-w,p+w];
+    for(const m of nb){if(m<0||m>=n||mask[m])continue;if(G[m]>=E)continue;const dm=dist(m,mr,mg,mb);if(dm<T1||(pd(m,p)<5&&dm<T1*2)){mask[m]=1;q[qt++]=m}}}
+  const frac=qt/n;if(frac<.06||frac>.88)return null;
+  const keep=new Uint8Array(n);for(let i=0;i<n;i++){if(!mask[i]){keep[i]=1;continue}const x=i%w;if((x>0&&!mask[i-1])||(x<w-1&&!mask[i+1])||(i>=w&&!mask[i-w])||(i<n-w&&!mask[i+w]))keep[i]=1}
+  let a=new Float32Array(n);for(let i=0;i<n;i++)a[i]=keep[i]?255:0;
   const blur=src=>{const o=new Float32Array(n),t=new Float32Array(n);for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=y*w+x;t[i]=(src[i]+(x>0?src[i-1]:src[i])+(x<w-1?src[i+1]:src[i]))/3}for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=y*w+x;o[i]=(t[i]+(y>0?t[i-w]:t[i])+(y<h-1?t[i+w]:t[i]))/3}return o};
-  a=blur(blur(a));for(let i=0;i<n;i++){d[i*4+3]=Math.max(0,Math.min(255,(a[i]-40)*1.3))}
+  a=blur(a);for(let i=0;i<n;i++){d[i*4+3]=Math.max(0,Math.min(255,(a[i]-30)*1.25))}
   return true}
 function auraOf(d){let r=0,g=0,b=0,k=0;for(let i=0;i<d.length;i+=16){if(d[i+3]<128)continue;r+=d[i];g+=d[i+1];b+=d[i+2];k++}if(!k)return H[0];r/=k;g/=k;b/=k;
   const m=(r+g+b)/3,sat=v=>Math.max(0,Math.min(255,m+(v-m)*1.6));r=sat(r);g=sat(g);b=sat(b);
@@ -428,11 +431,12 @@ function auraOf(d){let r=0,g=0,b=0,k=0;for(let i=0;i<d.length;i+=16){if(d[i+3]<1
 async function prep(file){const url=URL.createObjectURL(file);try{const g=await loadImg(url);const s=Math.min(1,900/Math.max(g.naturalWidth,g.naturalHeight));const w=Math.max(1,Math.round(g.naturalWidth*s)),h=Math.max(1,Math.round(g.naturalHeight*s));
   const cv=document.createElement('canvas');cv.width=w;cv.height=h;const x=cv.getContext('2d',{willReadFrequently:true});x.drawImage(g,0,0,w,h);const im=x.getImageData(0,0,w,h),d=im.data;
   let tr=0;for(let i=3;i<d.length;i+=16)if(d[i]<250)tr++;const had=tr/(d.length/16)>.02;
+  const orig=had?null:await new Promise(ok=>cv.toBlob(ok,'image/jpeg',.88));const aura0=auraOf(d);
   let cut=had;if(!had&&lift(d,w,h)){cut=true;x.putImageData(im,0,0)}
   let out=cv;if(cut){let x0=w,y0=h,x1=0,y1=0;for(let y=0;y<h;y+=2)for(let xx=0;xx<w;xx+=2)if(d[(y*w+xx)*4+3]>24){if(xx<x0)x0=xx;if(xx>x1)x1=xx;if(y<y0)y0=y;if(y>y1)y1=y}
     if(x1>x0&&y1>y0){const pd=Math.round(Math.max(x1-x0,y1-y0)*.04);x0=Math.max(0,x0-pd);y0=Math.max(0,y0-pd);x1=Math.min(w,x1+pd);y1=Math.min(h,y1+pd);out=document.createElement('canvas');out.width=x1-x0;out.height=y1-y0;out.getContext('2d').drawImage(cv,x0,y0,x1-x0,y1-y0,0,0,x1-x0,y1-y0)}}
   const blob=await new Promise(ok=>out.toBlob(ok,cut?'image/png':'image/jpeg',.88));
-  return {blob,cut,had,h:auraOf(d),preview:URL.createObjectURL(blob)}}finally{URL.revokeObjectURL(url)}}
+  return {blob,cut,had,h:cut&&!had?auraOf(d):aura0,preview:URL.createObjectURL(blob),orig,origPreview:orig&&cut?URL.createObjectURL(orig):null}}finally{URL.revokeObjectURL(url)}}
 const toData=b=>new Promise(ok=>{const fr=new FileReader();fr.onload=()=>ok(fr.result);fr.readAsDataURL(b)});
 async function shrink(blob,cut){const g=await loadImg(URL.createObjectURL(blob));const s=Math.min(1,360/Math.max(g.width,g.height));const cv=document.createElement('canvas');cv.width=g.width*s;cv.height=g.height*s;cv.getContext('2d').drawImage(g,0,0,cv.width,cv.height);return cv.toDataURL(cut?'image/png':'image/jpeg',.82)}
 
@@ -440,9 +444,10 @@ function addSheet(c){let P=null,busy=false,tagSel='';const ts=tagsOf(c);
   show(`<div class="st">new wish</div><div class="dt">for ${esc(c.n.toLowerCase())}</div>
   <label class="pick" aria-label="Choose photo"><div class="au" id="pa" style="--h:rgba(140,133,116,.35);width:132px;height:132px"><span class="dt">choose photo</span></div><div class="scan" id="scn"></div><input type="file" accept="image/*" id="fi"></label>
   <div class="dt" id="ps" style="text-align:center;min-height:16px;margin:4px 0 6px"></div>
+  <div class="chips" id="mode" style="justify-content:center;margin:0 0 10px" hidden><button class="ch on" data-v="lift">lifted</button><button class="ch" data-v="orig">original</button></div>
   <div class="paste"><div class="in pz" id="pz" contenteditable="true" role="textbox" aria-label="Paste a cut-out" data-ph="or paste a cut-out here"></div></div>
   <div class="two"><div style="flex:2"><label class="lbl" for="n1">name ▸</label><input class="in" id="n1" placeholder="matcha tin" autocomplete="off"></div>
-  <div><label class="lbl" for="n3">price ▸ €</label><input class="in" id="n3" inputmode="numeric" placeholder="30" autocomplete="off"></div></div>
+  <div><label class="lbl" for="n3">price ▸ €</label><input class="in" id="n3" inputmode="decimal" placeholder="6.75" autocomplete="off"></div></div>
   <span class="lbl">tag ▸ optional</span><div class="chips" id="atg" style="flex-wrap:wrap;margin:6px 0 10px"></div>
   <input class="in" id="nt" placeholder="new tag name" hidden autocomplete="off">
   <div class="dt er"></div><div style="text-align:center"><button class="bt pr" id="go">add wish</button></div>`);
@@ -451,7 +456,8 @@ function addSheet(c){let P=null,busy=false,tagSel='';const ts=tagsOf(c);
   async function take(file){if(!file||!/^image\//.test(file.type||'image/'))return fail('that file is not a photo');busy=true;$('scn').classList.add('on');$('ps').textContent='lifting background…';
     await new Promise(r=>setTimeout(r,60));
     try{P=await prep(file);const pa=$('pa');if(!pa)return;pa.style.setProperty('--h',P.h);pa.innerHTML=P.cut?`<img class="cut" src="${P.preview}" alt="" style="width:108px;height:108px">`:`<img class="soft" src="${P.preview}" alt="" style="width:90px;height:90px">`;
-      $('ps').textContent=P.had?'cut-out ready':P.cut?'background lifted':'busy background · kept with a soft edge';sfx('tap')}
+      $('ps').textContent=P.had?'cut-out ready':P.cut?'background lifted · not right? tap original':'busy background · kept with a soft edge';P.use='lift';
+      const md=$('mode');md.hidden=!P.origPreview;md.querySelectorAll('.ch').forEach(b=>{b.classList.toggle('on',b.dataset.v==='lift');b.onclick=()=>{sfx('tap');P.use=b.dataset.v;md.querySelectorAll('.ch').forEach(x=>x.classList.toggle('on',x===b));const o=P.use==='orig';pa.innerHTML=o?`<img class="soft" src="${P.origPreview}" alt="" style="width:90px;height:90px">`:`<img class="cut" src="${P.preview}" alt="" style="width:108px;height:108px">`}});sfx('tap')}
     catch(e){P=null;fail('could not read that photo · try another')}
     finally{busy=false;const s=$('scn');if(s)s.classList.remove('on')}}
   $('fi').onchange=e=>take(e.target.files[0]);
@@ -462,8 +468,9 @@ function addSheet(c){let P=null,busy=false,tagSel='';const ts=tagsOf(c);
     setTimeout(async()=>{const im=pz.querySelector('img');pz.innerHTML='';pz.blur();if(!im||!im.src)return fail('nothing to paste · copy a cut-out first');
       try{const g=await loadImg(im.src);const cv=document.createElement('canvas');cv.width=g.naturalWidth;cv.height=g.naturalHeight;cv.getContext('2d').drawImage(g,0,0);const b=await new Promise(ok=>cv.toBlob(ok,'image/png'));take(new File([b],'paste.png',{type:'image/png'}))}catch(er){fail('could not read that paste · try save image instead')}},60)});
   $('go').onclick=async()=>{if(busy)return;const nm=$('n1').value.trim();if(!nm)return fail('give it a name first');const go=$('go');go.setAttribute('aria-busy','true');go.textContent='saving…';
-    const item={id:uid('i'),nm,tag:($('nt').value.trim().toLowerCase())||tagSel,price:num($('n3').value),h:P?P.h:H[c.it.length%6],cut:P?P.cut:false,at:Date.now()};
-    if(P){const k=uid('m');try{await putImg(k,P.blob);URLS[k]=P.preview;item.imgKey=k}catch(e){try{item.src=await shrink(P.blob,P.cut)}catch(_){}}}
+    const useOrig=P&&P.use==='orig'&&P.orig;const blob=P?(useOrig?P.orig:P.blob):null,cut=P?(useOrig?false:P.cut):false;
+    const item={id:uid('i'),nm,tag:($('nt').value.trim().toLowerCase())||tagSel,price:num($('n3').value),h:P?P.h:H[c.it.length%6],cut,at:Date.now()};
+    if(P){const k=uid('m');try{await putImg(k,blob);URLS[k]=useOrig?P.origPreview:P.preview;item.imgKey=k}catch(e){try{item.src=await shrink(blob,cut)}catch(_){}}}
     c.it.unshift(item);save(c);sfx('add');shut();tag='all';render(1)}}
 
 /* ---------- boot ---------- */
