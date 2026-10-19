@@ -109,7 +109,8 @@ svg.i{display:block;flex:none}
 .ov.o .f{opacity:1;transform:none}
 .cd.gone .f{opacity:0!important;transition-delay:0s!important}
 #x{position:absolute;top:calc(16px + env(safe-area-inset-top,0px));right:var(--gr);z-index:2;width:40px;height:40px;display:flex;align-items:center;justify-content:center}
-#big{width:200px;height:200px}
+#big{width:200px;height:200px;cursor:pointer;margin:0 auto}
+#big .scan{z-index:2}
 .fields{padding:14px 16px 6px}
 .lbl{display:block;font-size:11px;letter-spacing:2px;color:var(--mut)}
 .in{display:block;width:100%;background:transparent;border:0;border-bottom:1px dashed var(--ln);color:var(--fg);font-family:var(--px);font-size:16px;letter-spacing:1px;padding:2px 0 5px;margin:0 0 12px;border-radius:0;outline:none;-webkit-appearance:none;appearance:none;user-select:text;-webkit-user-select:text}
@@ -188,7 +189,12 @@ textarea.in{resize:none;line-height:1.5}
 
   <div class="ov gl" id="ov"><div class="cd" id="cd">
     <button id="x" aria-label="Close"></button>
-    <div class="au" id="big"></div>
+    <div class="au" id="big" role="button" tabindex="0" aria-label="Change photo"></div>
+    <input type="file" accept="image/*" id="cfi" hidden>
+    <div class="f" style="text-align:center;transition-delay:.06s">
+      <div class="dt" id="cst" style="min-height:16px;opacity:.7"></div>
+      <div class="chips" id="cmode" style="justify-content:center;margin:6px 0 4px" hidden><button class="ch on" data-v="lift">lifted</button><button class="ch" data-v="orig">original</button></div>
+    </div>
     <div class="f" style="text-align:center;transition-delay:.1s">
       <div class="dt" id="no"></div>
       <input class="in" id="nm" aria-label="Wish name" autocomplete="off">
@@ -346,11 +352,22 @@ cd.addEventListener('scroll',()=>{const s=Math.min(cd.scrollTop,180);big.style.t
 function ctags(){const ts=tagsOf(C());$('ctg').innerHTML=['none',...ts].map(x=>`<button class="ch${(cur.tag||'none')===x?' on':''}" data-t="${esc(x)}">${esc(x)}</button>`).join('');$('ctg').querySelectorAll('.ch').forEach(e=>e.onclick=()=>{sfx('tap');cur.tag=e.dataset.t==='none'?'':e.dataset.t;dirty=true;save(C());ctags()})}
 function open(it,el){sfx('open');cur=it;dirty=false;const c=C(),i=c.it.indexOf(it),rr=el.getBoundingClientRect(),q=app.getBoundingClientRect();
   cd.style.transformOrigin=`${rr.left-q.left+rr.width/2}px ${rr.top-q.top+70}px`;cd.scrollTop=0;big.style.transform='';big.style.opacity=1;cd.classList.remove('gone');big.getAnimations().forEach(a=>a.cancel());big.classList.remove('ok');
-  big.style.setProperty('--h',it.h);big.innerHTML=media(it,200);$('nm').value=it.nm;$('no').textContent=`wish no. ${String(i+1).padStart(2,'0')}`;ctags();
+  big.style.setProperty('--h',it.h);big.innerHTML=media(it,200);$('cst').textContent=srcOf(it)?'tap photo to change':'tap to add a photo';$('cmode').hidden=true;$('cfi').value='';$('nm').value=it.nm;$('no').textContent=`wish no. ${String(i+1).padStart(2,'0')}`;ctags();
   F.forEach(k=>$('f_'+k).value=it[k]||'');$('f_price').value=it.price||'';
   $('ad').textContent='added '+new Date(it.at||Date.now()).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}).toLowerCase();
   ov.classList.add('o')}
 F.forEach(k=>$('f_'+k).addEventListener('input',e=>{cur[k]=e.target.value;save(C())}));
+let cbusy=false;
+const pickPhoto=()=>{if(cbusy||!cur)return;sfx('tap');$('cfi').click()};
+big.addEventListener('click',pickPhoto);big.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pickPhoto()}});
+$('cfi').addEventListener('change',async e=>{const file=e.target.files[0];if(!file||!cur)return;const it=cur;cbusy=true;$('cst').textContent='lifting background…';const sc0=document.createElement('div');sc0.className='scan on';big.appendChild(sc0);
+  try{const P=await prep(file);const old=it.imgKey,k=uid('m');await putImg(k,P.blob);URLS[k]=P.preview;it.imgKey=k;it.cut=P.cut;it.h=P.h;delete it.src;if(old)delImg(old);dirty=true;save(C());
+    const show=()=>{if(cur!==it)return;big.style.setProperty('--h',it.h);big.innerHTML=media(it,200)};show();sfx('add');
+    $('cst').textContent=P.had?'cut-out ready':P.cut?'background lifted · not right? tap original':'busy background · kept with a soft edge';
+    const md=$('cmode');md.hidden=!P.origPreview;md.querySelectorAll('.ch').forEach(b=>{b.classList.toggle('on',b.dataset.v==='lift');b.onclick=async()=>{sfx('tap');const o=b.dataset.v==='orig';md.querySelectorAll('.ch').forEach(x=>x.classList.toggle('on',x===b));
+      try{await putImg(it.imgKey,o?P.orig:P.blob)}catch(_){}URLS[it.imgKey]=o?P.origPreview:P.preview;it.cut=o?false:P.cut;save(C());show()}})}
+  catch(err){$('cst').textContent='could not read that photo · try another'}
+  finally{cbusy=false;sc0.remove();e.target.value=''}});
 $('f_price').addEventListener('input',e=>{cur.price=num(e.target.value);dirty=true;save(C())});
 $('nm').addEventListener('input',e=>{cur.nm=e.target.value||'untitled';dirty=true;save(C())});
 function closeCard(){if(!ov.classList.contains('o'))return;sfx('tap');ov.classList.remove('o');document.activeElement&&document.activeElement.blur&&document.activeElement.blur();if(dirty)setTimeout(()=>render(),300)}
