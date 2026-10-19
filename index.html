@@ -69,8 +69,9 @@ svg.i{display:block;flex:none}
 .stage{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
 .sc{overflow-x:auto;scrollbar-width:none;padding:8px 0 4px;touch-action:pan-x}
 .row{display:flex;width:max-content}
-.it{width:140px;flex:none;text-align:center}
-.it .dt{padding:0 10px;white-space:normal;overflow-wrap:anywhere;line-height:1.5}
+.it{width:var(--sz,140px);flex:none;text-align:center}
+.it .au{width:var(--sz,140px);height:var(--sz,140px)}
+.it .dt{font-size:12px;margin-top:2px;padding:0 10px;white-space:normal;overflow-wrap:anywhere;line-height:1.5}
 .au{position:relative;width:140px;height:140px;display:flex;align-items:center;justify-content:center;margin:0 auto;color:var(--mut)}
 .au::before{content:'';position:absolute;inset:4px;border-radius:50%;background:radial-gradient(circle,var(--h) 0%,var(--h) 22%,transparent 70%);filter:blur(8px);animation:br 6s ease-in-out infinite;animation-delay:var(--d,0s);transition:background .8s}
 .au.ok::before{--h:rgba(217,183,106,.8)}
@@ -320,10 +321,10 @@ function render(anim){const c=C();$('chv').innerHTML=c?ico('chev',10):ico('plus'
   const ts=tagsOf(c);if(tag!=='all'&&!ts.includes(tag))tag='all';
   $('chips').innerHTML=ts.length?['all',...ts].map(x=>`<button class="ch${x===tag?' on':''}" data-x="${esc(x)}">${esc(x)}${x==='all'?'':' '+c.it.filter(i=>i.tag===x).length}</button>`).join(''):'';
   $('chips').querySelectorAll('.ch').forEach(e=>e.onclick=()=>{sfx('tap');tag=e.dataset.x;render(1)});
-  const vis=tag==='all'?c.it:c.it.filter(i=>i.tag===tag);row.innerHTML='';auto=vis.length>=3;row.style.margin=auto?'':'0 auto';
+  const vis=tag==='all'?c.it:c.it.filter(i=>i.tag===tag);row.innerHTML='';auto=vis.length>=3;row.style.margin=auto?'':'0 auto';const SZ=Math.round(Math.min(230,Math.max(140,Math.min(innerWidth,480)*.47)));row.style.setProperty('--sz',SZ+'px');
   if(!vis.length){row.innerHTML=emptyState(c);bindSpark(c)}
   const frag=document.createDocumentFragment();
-  for(let k=0;k<(auto?3:1);k++)vis.forEach((it,i)=>{const e=document.createElement('button');e.className='it';e.setAttribute('aria-label',it.nm);e.innerHTML=`<div class="au" style="--h:${it.h};--d:-${(i*1.3).toFixed(1)}s">${media(it,140)}</div><div class="dt">${esc(it.nm.toLowerCase())}</div>`;e.onclick=()=>open(it,e);if(k)e.tabIndex=-1;frag.appendChild(e)});
+  for(let k=0;k<(auto?3:1);k++)vis.forEach((it,i)=>{const e=document.createElement('button');e.className='it';e.setAttribute('aria-label',it.nm);e.innerHTML=`<div class="au" style="--h:${it.h};--d:-${(i*1.3).toFixed(1)}s">${media(it,SZ)}</div><div class="dt">${esc(it.nm.toLowerCase())}</div>`;e.onclick=()=>open(it,e);if(k)e.tabIndex=-1;frag.appendChild(e)});
   row.appendChild(frag);its=[...row.querySelectorAll('.it')];count();hp();
   requestAnimationFrame(()=>{W=auto?row.scrollWidth/3:0;pos=W;sc.scrollLeft=pos});
   if(anim)sc.animate([{opacity:0,transform:'translateX(40px)'},{opacity:1,transform:'none'}],{duration:600,easing:'cubic-bezier(.2,.9,.3,1)'})}
