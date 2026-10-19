@@ -259,7 +259,9 @@ const SFX={
 const sfx=k=>{if(!st.set.snd)return;try{if(AC&&AC.state==='suspended')AC.resume();SFX[k]()}catch(e){}};
 
 /* ---------- state + persistence ---------- */
-const H=['rgba(201,140,150,.6)','rgba(150,165,130,.6)','rgba(165,140,190,.6)','rgba(205,155,105,.6)','rgba(190,175,120,.6)','rgba(140,150,170,.6)'];
+const H=['rgba(206,138,156,.62)','rgba(150,168,128,.6)','rgba(170,142,198,.6)','rgba(214,158,112,.6)','rgba(196,170,104,.6)','rgba(132,152,182,.6)','rgba(186,120,150,.6)'];
+const nextAura=c=>{const h=H[(c.hn||0)%H.length];c.hn=(c.hn||0)+1;return h};
+function recolor(){if(st.set.aura2)return;st.cols.forEach(c=>{let k=0;[...c.it,...(c.gr||[])].forEach(i=>{i.h=H[k++%H.length]});c.hn=k});st.set.aura2=true;save()}
 const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const day=864e5, KEY='miette.v1';
 let st={cols:[],set:{snd:true,ink:false,cur:null}};
@@ -278,7 +280,7 @@ function applyTheme(){document.documentElement.classList.toggle('ink',!!st.set.i
 async function boot(){let got=null;try{got=await tx('kv','readonly',s=>s.get('state'))}catch(e){}
   if(!got||!Array.isArray(got.cols)){try{const l=JSON.parse(localStorage.getItem(KEY)||'null');if(l&&Array.isArray(l.cols))got=l}catch(e){}}
   if(got&&Array.isArray(got.cols))st=got;
-  st.set=Object.assign({snd:true,ink:false,cur:null},st.set||{});ensure();
+  st.set=Object.assign({snd:true,ink:false,cur:null},st.set||{});ensure();recolor();
   const keys=new Set();st.cols.forEach(c=>[...c.it,...(c.gr||[])].forEach(i=>{if(i.imgKey)keys.add(i.imgKey)}));
   await Promise.all([...keys].map(k=>tx('img','readonly',s=>s.get(k)).then(b=>{if(b)URLS[k]=URL.createObjectURL(b)}).catch(()=>{})));
   applyTheme();syncMenu();render(1)}
@@ -363,7 +365,7 @@ let cbusy=false;
 const pickPhoto=()=>{if(cbusy||!cur)return;sfx('tap');$('cfi').click()};
 big.addEventListener('click',pickPhoto);big.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pickPhoto()}});
 $('cfi').addEventListener('change',async e=>{const file=e.target.files[0];if(!file||!cur)return;const it=cur;cbusy=true;$('cst').textContent='lifting background…';const sc0=document.createElement('div');sc0.className='scan on';big.appendChild(sc0);
-  try{const P=await prep(file);const old=it.imgKey,k=uid('m');await putImg(k,P.blob);URLS[k]=P.preview;it.imgKey=k;it.cut=P.cut;it.h=P.h;delete it.src;if(old)delImg(old);dirty=true;save(C());
+  try{const P=await prep(file);const old=it.imgKey,k=uid('m');await putImg(k,P.blob);URLS[k]=P.preview;it.imgKey=k;it.cut=P.cut;delete it.src;if(old)delImg(old);dirty=true;save(C());
     const show=()=>{if(cur!==it)return;big.style.setProperty('--h',it.h);big.innerHTML=media(it,200)};show();sfx('add');
     $('cst').textContent=P.had?'cut-out ready':P.cut?'background lifted · not right? tap original':'busy background · kept with a soft edge';
     const md=$('cmode');md.hidden=!P.origPreview;md.querySelectorAll('.ch').forEach(b=>{b.classList.toggle('on',b.dataset.v==='lift');b.onclick=async()=>{sfx('tap');const o=b.dataset.v==='orig';md.querySelectorAll('.ch').forEach(x=>x.classList.toggle('on',x===b));
@@ -445,7 +447,7 @@ function backupSheet(){show(`<div class="st">backup</div><div class="dt" style="
     const n=o.st.cols.reduce((t,c)=>t+c.it.length,0),er=sh.querySelector('.er');
     er.innerHTML=`found ${o.st.cols.length} ${o.st.cols.length===1?'collection':'collections'} · ${n} ${n===1?'wish':'wishes'}<br>this replaces what's here now · <button id="bk3" style="color:var(--acc);text-decoration:underline;letter-spacing:2px;font-size:11px">restore now</button>`;
     $('bk3').onclick=async()=>{try{for(const [k,du] of Object.entries(o.imgs||{})){const bl=await (await fetch(du)).blob();await putImg(k,bl);if(URLS[k])URL.revokeObjectURL(URLS[k]);URLS[k]=URL.createObjectURL(bl)}
-      st=o.st;st.set=Object.assign({snd:true,ink:false,cur:null},st.set||{});ensure();save();applyTheme();syncMenu();tag='all';sfx('add');shut();render(1);toast('✦ backup restored')}
+      st=o.st;st.set=Object.assign({snd:true,ink:false,cur:null},st.set||{});ensure();recolor();save();applyTheme();syncMenu();tag='all';sfx('add');shut();render(1);toast('✦ backup restored')}
       catch(_){fail('could not restore that backup')}}}}
 function newCol(){show(`<div class="st">new collection</div><div class="dt" style="margin-bottom:14px">budget and countdown are optional</div>`+colFields()+`<div style="text-align:center"><button class="bt pr" id="go">create</button></div>`);dateMask();
     $('go').onclick=()=>{const n={id:uid('c'),spent:0,at:Date.now(),it:[],gr:[]};if(!readCol(n))return;st.cols.push(n);st.set.cur=n.id;tag='all';save(n);save();sfx('add');shut();render(1)}}
@@ -505,7 +507,7 @@ function addSheet(c){let P=null,busy=false,tagSel='';const ts=tagsOf(c);
     $('atg').querySelectorAll('.ch').forEach(e=>e.onclick=()=>{sfx('tap');if(e.dataset.t==='+'){tagSel='';$('nt').hidden=false;$('nt').focus()}else{tagSel=tagSel===e.dataset.t?'':e.dataset.t;$('nt').hidden=true;$('nt').value=''}drawT()})};drawT();
   async function take(file){if(!file||!/^image\//.test(file.type||'image/'))return fail('that file is not a photo');busy=true;$('mode').hidden=true;$('scn').classList.add('on');$('ps').textContent='lifting background…';
     await new Promise(r=>setTimeout(r,60));
-    try{P=await prep(file);const pa=$('pa');if(!pa)return;pa.style.setProperty('--h',P.h);pa.innerHTML=P.cut?`<img class="cut" src="${P.preview}" alt="" style="width:108px;height:108px">`:`<img class="soft" src="${P.preview}" alt="" style="width:90px;height:90px">`;
+    try{P=await prep(file);const pa=$('pa');if(!pa)return;pa.style.setProperty('--h',H[(c.hn||0)%H.length]);pa.innerHTML=P.cut?`<img class="cut" src="${P.preview}" alt="" style="width:108px;height:108px">`:`<img class="soft" src="${P.preview}" alt="" style="width:90px;height:90px">`;
       const bad=()=>{pa.innerHTML='<span class="dt">couldn\'t show that photo</span>';$('ps').textContent='try another photo or a screenshot of it';P=null;$('mode').hidden=true};const im0=pa.querySelector('img');if(im0)im0.onerror=bad;
       $('ps').textContent=P.had?'cut-out ready':P.cut?'background lifted · not right? tap original':'busy background · kept with a soft edge';P.use='lift';
       const md=$('mode');md.hidden=!(P.cut&&!P.had&&P.origPreview);md.querySelectorAll('.ch').forEach(b=>{b.classList.toggle('on',b.dataset.v==='lift');b.onclick=()=>{sfx('tap');P.use=b.dataset.v;md.querySelectorAll('.ch').forEach(x=>x.classList.toggle('on',x===b));const o=P.use==='orig';pa.innerHTML=o?`<img class="soft" src="${P.origPreview}" alt="" style="width:90px;height:90px">`:`<img class="cut" src="${P.preview}" alt="" style="width:108px;height:108px">`}});sfx('tap')}
@@ -520,7 +522,7 @@ function addSheet(c){let P=null,busy=false,tagSel='';const ts=tagsOf(c);
       try{const g=await loadImg(im.src);const cv=document.createElement('canvas');cv.width=g.naturalWidth;cv.height=g.naturalHeight;cv.getContext('2d').drawImage(g,0,0);const b=await new Promise(ok=>cv.toBlob(ok,'image/png'));take(new File([b],'paste.png',{type:'image/png'}))}catch(er){fail('could not read that paste · try save image instead')}},60)});
   $('go').onclick=async()=>{if(busy)return;const nm=$('n1').value.trim();if(!nm)return fail('give it a name first');const go=$('go');go.setAttribute('aria-busy','true');go.textContent='saving…';
     const useOrig=P&&P.use==='orig'&&P.orig;const blob=P?(useOrig?P.orig:P.blob):null,cut=P?(useOrig?false:P.cut):false;
-    const item={id:uid('i'),nm,tag:($('nt').value.trim().toLowerCase())||tagSel,price:num($('n3').value),h:P?P.h:H[c.it.length%6],cut,at:Date.now()};
+    const item={id:uid('i'),nm,tag:($('nt').value.trim().toLowerCase())||tagSel,price:num($('n3').value),h:nextAura(c),cut,at:Date.now()};
     if(P){const k=uid('m');try{await putImg(k,blob);URLS[k]=useOrig?P.origPreview:P.preview;item.imgKey=k}catch(e){try{item.src=await shrink(blob,cut)}catch(_){}}}
     c.it.unshift(item);save(c);sfx('add');shut();tag='all';render(1)}}
 
