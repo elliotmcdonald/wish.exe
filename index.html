@@ -12,6 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
+<script>try{if(localStorage.getItem("wishexe.ink")==="1"){document.documentElement.classList.add("ink");document.documentElement.style.background="#1C1916"}}catch(e){}</script>
 <link rel="preload" href="fonts/dotgothic16.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/375x667@2.png">
 <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/414x896@2.png">
@@ -28,7 +29,7 @@
 @font-face{font-family:"DotGothic16";src:url("fonts/dotgothic16.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
 /* layout: one screen, pixel wordmark header, collection block, drifting aura carousel; overlays slide over it */
 :root{
-  --bg:#EFE7D8; --fg:#221D19; --mut:#857C6F; --acc:#7A2E2A; --ln:#D3C7B2; --gold:#B08A3A;
+  --bg:#EFE7D8; --fg:#221D19; --mut:#857C6F; --acc:#9C4A62; --ln:#D3C7B2; --gold:#B08A3A;
   --px:'DotGothic16','Osaka-Mono','MS Gothic',ui-monospace,monospace;
   --g:max(22px,env(safe-area-inset-left,0px)); --gr:max(22px,env(safe-area-inset-right,0px));
   color-scheme:light;
@@ -171,6 +172,7 @@ textarea.in{resize:none;line-height:1.5}
     <button data-m="edit" id="medit">edit collection</button>
     <button data-m="snd" id="msnd">sound · on</button>
     <button data-m="ink" id="mink">theme · parchment</button>
+    <button data-m="backup">backup · save or restore</button>
   </div>
 
   <div class="blk">
@@ -272,7 +274,7 @@ function delImg(k){tx('img','readwrite',s=>s.delete(k)).catch(()=>{});if(URLS[k]
 function dropRemote(c){[...c.it,...(c.gr||[])].forEach(i=>{if(i.imgKey)delImg(i.imgKey)})}
 function ensure(){if(!st.cols.length){st.set.cur=null;return}if(!st.cols.find(c=>c.id===st.set.cur))st.set.cur=st.cols[0].id}
 const C=()=>st.cols.find(c=>c.id===st.set.cur)||st.cols[0]||null;
-function applyTheme(){document.documentElement.classList.toggle('ink',!!st.set.ink);const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=st.set.ink?'#1C1916':'#EFE7D8'}
+function applyTheme(){document.documentElement.classList.toggle('ink',!!st.set.ink);document.documentElement.style.background=st.set.ink?'#1C1916':'#EFE7D8';try{localStorage.setItem('wishexe.ink',st.set.ink?'1':'0')}catch(e){}document.querySelectorAll('link[rel="apple-touch-startup-image"]').forEach(l=>{const f=l.getAttribute('href').split('/').pop();l.setAttribute('href',(st.set.ink?'splash/ink/':'splash/')+f)});const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=st.set.ink?'#1C1916':'#EFE7D8'}
 async function boot(){let got=null;try{got=await tx('kv','readonly',s=>s.get('state'))}catch(e){}
   if(!got||!Array.isArray(got.cols)){try{const l=JSON.parse(localStorage.getItem(KEY)||'null');if(l&&Array.isArray(l.cols))got=l}catch(e){}}
   if(got&&Array.isArray(got.cols))st=got;
@@ -313,7 +315,7 @@ const row=$('row'),sc=$('sc');
 let tag='all',W=0,pos=0,paused=false,auto=false,tm=null,its=[];
 function hp(){const c=C(),h=$('hp');h.hidden=!c||!c.budget;if(!c||!c.budget)return;const pl=c.it.reduce((s,i)=>s+(+i.price||0),0),rem=c.budget-(c.spent||0),free=Math.max(0,rem-pl),w=Math.min(pl,Math.max(rem,0));$('hf').style.width=`calc(${free/c.budget*100}% - 2px)`;$('hw').style.left=`calc(${free/c.budget*100}% + 1px)`;$('hw').style.width=`calc(${Math.max(0,w/c.budget*100)}% - 2px)`;$('hl1').textContent=`${eur(rem)} left`;$('hl2').innerHTML=pl>rem?`<span style="color:var(--acc)">over by ${eur(pl-rem)}</span>`:`${eur(pl)} wished`}
 function count(){const c=C();if(!c){$('ct').textContent='';return}$('ct').innerHTML=`${c.it.length} ${c.it.length===1?'wish':'wishes'}`+(c.gr.length?` · <button id="sv" style="color:var(--gold);letter-spacing:2px;font-size:11px">✦ ${c.gr.length} granted</button>`:'');const sv=$('sv');if(sv)sv.onclick=()=>{sfx('tap');shelf()}}
-function emptyState(c){return `<div class="empty"><button class="au spk" id="spk" style="--h:rgba(122,46,42,.22)" aria-label="${c?'Add a wish':'Start a collection'}">${ico('spark',38)}</button><div class="dt" style="line-height:1.9">${c?'a blank page for wishes<br>tap the sparkle to add one':'no collections yet<br>tap the sparkle to start one'}</div></div>`}
+function emptyState(c){return `<div class="empty"><button class="au spk" id="spk" style="--h:rgba(156,74,98,.22)" aria-label="${c?'Add a wish':'Start a collection'}">${ico('spark',38)}</button><div class="dt" style="line-height:1.9">${c?'a blank page for wishes<br>tap the sparkle to add one':'no collections yet<br>tap the sparkle to start one'}</div></div>`}
 function bindSpark(c){const b=$('spk');if(b)b.onclick=()=>{sfx('pop');c?addSheet(c):newCol()}}
 function render(anim){const c=C();$('chv').innerHTML=c?ico('chev',10):ico('plus',10);
   if(!c){row.style.margin='0 auto';$('tn').textContent='add collection';$('cdn').hidden=true;$('chips').innerHTML='';row.innerHTML=emptyState(null);bindSpark(null);its=[];auto=false;count();hp();sc.scrollLeft=0;if(anim)sc.animate([{opacity:0},{opacity:1}],{duration:500});return}
@@ -424,7 +426,27 @@ mn.querySelectorAll('button').forEach(b=>b.onclick=()=>{const m=b.dataset.m,c=C(
   sfx('tap');closeAll();
   if(m==='add'){c?addSheet(c):newCol();return}
   if(m==='new')newCol();
-  if(m==='edit'&&c)editCol(c)});
+  if(m==='edit'&&c)editCol(c);
+  if(m==='backup')backupSheet()});
+function backupSheet(){show(`<div class="st">backup</div><div class="dt" style="margin-bottom:16px;line-height:1.8">save a copy of every collection, wish and photo.<br>restore it here or on a new phone.</div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap"><button class="bt pr" id="bk1">save backup</button><label class="bt" style="position:relative;overflow:hidden">restore<input type="file" id="bk2" accept=".json,application/json" style="position:absolute;inset:0;opacity:0"></label></div>
+  <div class="dt er" style="margin-top:16px;line-height:1.8"></div>`);
+  $('bk1').onclick=async()=>{const b=$('bk1');b.setAttribute('aria-busy','true');b.textContent='packing…';
+    try{const imgs={},keys=new Set();st.cols.forEach(c=>[...c.it,...(c.gr||[])].forEach(i=>{if(i.imgKey)keys.add(i.imgKey)}));
+      for(const k of keys){const bl=await tx('img','readonly',s=>s.get(k));if(bl)imgs[k]=await toData(bl)}
+      const name=`wish-exe-backup-${new Date().toISOString().slice(0,10)}.json`,file=new File([JSON.stringify({app:'wish.exe',v:1,at:Date.now(),st,imgs})],name,{type:'application/json'});
+      if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:'wish.exe backup'});
+      else{const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=name;document.body.appendChild(a);a.click();a.remove()}
+      b.textContent='saved ✦';sfx('add')}
+    catch(e){b.textContent='save backup';if(!(e&&e.name==='AbortError'))fail('could not save the backup')}
+    finally{b.removeAttribute('aria-busy')}};
+  $('bk2').onchange=async e=>{const f=e.target.files[0];if(!f)return;let o=null;
+    try{o=JSON.parse(await f.text());if(!o||o.app!=='wish.exe'||!o.st||!Array.isArray(o.st.cols))throw 0}catch(_){e.target.value='';return fail('that file is not a wish.exe backup')}
+    const n=o.st.cols.reduce((t,c)=>t+c.it.length,0),er=sh.querySelector('.er');
+    er.innerHTML=`found ${o.st.cols.length} ${o.st.cols.length===1?'collection':'collections'} · ${n} ${n===1?'wish':'wishes'}<br>this replaces what's here now · <button id="bk3" style="color:var(--acc);text-decoration:underline;letter-spacing:2px;font-size:11px">restore now</button>`;
+    $('bk3').onclick=async()=>{try{for(const [k,du] of Object.entries(o.imgs||{})){const bl=await (await fetch(du)).blob();await putImg(k,bl);if(URLS[k])URL.revokeObjectURL(URLS[k]);URLS[k]=URL.createObjectURL(bl)}
+      st=o.st;st.set=Object.assign({snd:true,ink:false,cur:null},st.set||{});ensure();save();applyTheme();syncMenu();tag='all';sfx('add');shut();render(1);toast('✦ backup restored')}
+      catch(_){fail('could not restore that backup')}}}}
 function newCol(){show(`<div class="st">new collection</div><div class="dt" style="margin-bottom:14px">budget and countdown are optional</div>`+colFields()+`<div style="text-align:center"><button class="bt pr" id="go">create</button></div>`);dateMask();
     $('go').onclick=()=>{const n={id:uid('c'),spent:0,at:Date.now(),it:[],gr:[]};if(!readCol(n))return;st.cols.push(n);st.set.cur=n.id;tag='all';save(n);save();sfx('add');shut();render(1)}}
 function editCol(c){show(`<div class="st">edit collection</div><div class="dt" style="margin-bottom:14px">budget and countdown are optional</div>`+colFields(c)+`<div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><button class="dt" id="del" style="color:var(--acc)">delete collection</button><button class="bt pr" id="go">save</button></div>`);dateMask();
@@ -463,7 +485,8 @@ async function prep(file){const url=URL.createObjectURL(file);try{const g=await 
   let out=cv;if(cut){let x0=w,y0=h,x1=0,y1=0;for(let y=0;y<h;y+=2)for(let xx=0;xx<w;xx+=2)if(d[(y*w+xx)*4+3]>24){if(xx<x0)x0=xx;if(xx>x1)x1=xx;if(y<y0)y0=y;if(y>y1)y1=y}
     if(x1>x0&&y1>y0){const pd=Math.round(Math.max(x1-x0,y1-y0)*.04);x0=Math.max(0,x0-pd);y0=Math.max(0,y0-pd);x1=Math.min(w,x1+pd);y1=Math.min(h,y1+pd);out=document.createElement('canvas');out.width=x1-x0;out.height=y1-y0;out.getContext('2d').drawImage(cv,x0,y0,x1-x0,y1-y0,0,0,x1-x0,y1-y0)}}
   const blob=await new Promise(ok=>out.toBlob(ok,cut?'image/png':'image/jpeg',.88));
-  return {blob,cut,had,h:cut&&!had?auraOf(d):aura0,preview:URL.createObjectURL(blob),orig,origPreview:orig&&cut?URL.createObjectURL(orig):null}}finally{URL.revokeObjectURL(url)}}
+  if(!blob)throw new Error('encode');const preview=URL.createObjectURL(blob);await loadImg(preview);
+  return {blob,cut,had,h:cut&&!had?auraOf(d):aura0,preview,orig,origPreview:orig&&cut?URL.createObjectURL(orig):null}}finally{URL.revokeObjectURL(url)}}
 const toData=b=>new Promise(ok=>{const fr=new FileReader();fr.onload=()=>ok(fr.result);fr.readAsDataURL(b)});
 async function shrink(blob,cut){const g=await loadImg(URL.createObjectURL(blob));const s=Math.min(1,360/Math.max(g.width,g.height));const cv=document.createElement('canvas');cv.width=g.width*s;cv.height=g.height*s;cv.getContext('2d').drawImage(g,0,0,cv.width,cv.height);return cv.toDataURL(cut?'image/png':'image/jpeg',.82)}
 
@@ -480,11 +503,12 @@ function addSheet(c){let P=null,busy=false,tagSel='';const ts=tagsOf(c);
   <div class="dt er"></div><div style="text-align:center"><button class="bt pr" id="go">add wish</button></div>`);
   const drawT=()=>{$('atg').innerHTML=ts.map(x=>`<button class="ch${tagSel===x?' on':''}" data-t="${esc(x)}">${esc(x)}</button>`).join('')+`<button class="ch" data-t="+">+ new</button>`;
     $('atg').querySelectorAll('.ch').forEach(e=>e.onclick=()=>{sfx('tap');if(e.dataset.t==='+'){tagSel='';$('nt').hidden=false;$('nt').focus()}else{tagSel=tagSel===e.dataset.t?'':e.dataset.t;$('nt').hidden=true;$('nt').value=''}drawT()})};drawT();
-  async function take(file){if(!file||!/^image\//.test(file.type||'image/'))return fail('that file is not a photo');busy=true;$('scn').classList.add('on');$('ps').textContent='lifting background…';
+  async function take(file){if(!file||!/^image\//.test(file.type||'image/'))return fail('that file is not a photo');busy=true;$('mode').hidden=true;$('scn').classList.add('on');$('ps').textContent='lifting background…';
     await new Promise(r=>setTimeout(r,60));
     try{P=await prep(file);const pa=$('pa');if(!pa)return;pa.style.setProperty('--h',P.h);pa.innerHTML=P.cut?`<img class="cut" src="${P.preview}" alt="" style="width:108px;height:108px">`:`<img class="soft" src="${P.preview}" alt="" style="width:90px;height:90px">`;
+      const bad=()=>{pa.innerHTML='<span class="dt">couldn\'t show that photo</span>';$('ps').textContent='try another photo or a screenshot of it';P=null;$('mode').hidden=true};const im0=pa.querySelector('img');if(im0)im0.onerror=bad;
       $('ps').textContent=P.had?'cut-out ready':P.cut?'background lifted · not right? tap original':'busy background · kept with a soft edge';P.use='lift';
-      const md=$('mode');md.hidden=!P.origPreview;md.querySelectorAll('.ch').forEach(b=>{b.classList.toggle('on',b.dataset.v==='lift');b.onclick=()=>{sfx('tap');P.use=b.dataset.v;md.querySelectorAll('.ch').forEach(x=>x.classList.toggle('on',x===b));const o=P.use==='orig';pa.innerHTML=o?`<img class="soft" src="${P.origPreview}" alt="" style="width:90px;height:90px">`:`<img class="cut" src="${P.preview}" alt="" style="width:108px;height:108px">`}});sfx('tap')}
+      const md=$('mode');md.hidden=!(P.cut&&!P.had&&P.origPreview);md.querySelectorAll('.ch').forEach(b=>{b.classList.toggle('on',b.dataset.v==='lift');b.onclick=()=>{sfx('tap');P.use=b.dataset.v;md.querySelectorAll('.ch').forEach(x=>x.classList.toggle('on',x===b));const o=P.use==='orig';pa.innerHTML=o?`<img class="soft" src="${P.origPreview}" alt="" style="width:90px;height:90px">`:`<img class="cut" src="${P.preview}" alt="" style="width:108px;height:108px">`}});sfx('tap')}
     catch(e){P=null;fail('could not read that photo · try another')}
     finally{busy=false;const s=$('scn');if(s)s.classList.remove('on')}}
   $('fi').onchange=e=>take(e.target.files[0]);
