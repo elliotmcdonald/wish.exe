@@ -72,7 +72,7 @@ svg.i{display:block;flex:none}
 .it{width:var(--sz,140px);flex:none;text-align:center}
 .it .au{width:var(--sz,140px);height:var(--sz,140px)}
 .it .pr{font-size:11px;margin-top:3px;color:var(--mut);letter-spacing:1px;white-space:nowrap}.it .pr b{font-weight:400;color:var(--gold);letter-spacing:2px;font-size:13px}
-.imp{display:flex;gap:6px;justify-content:center;margin-top:8px}.imp button{font-size:20px;line-height:1;color:var(--ln);padding:2px 4px}.imp button.on{color:var(--gold)}.imp small{display:block;font-size:9px;letter-spacing:2px;color:var(--mut);text-align:center;margin-top:4px}
+.impw{margin:-16px 0 22px;text-align:center}.imp{display:flex;gap:0;justify-content:center}.imp button{font-size:18px;line-height:1;color:var(--mut);padding:4px 3px}.imp button.on{color:var(--gold)}.impw small{display:block;font-size:9px;letter-spacing:2px;color:var(--mut);margin-top:2px}
 .it .dt{font-size:12px;margin-top:2px;padding:0 10px;white-space:normal;overflow-wrap:anywhere;line-height:1.5}
 .au{position:relative;width:140px;height:140px;display:flex;align-items:center;justify-content:center;margin:0 auto;color:var(--mut)}
 .au::before{content:'';position:absolute;inset:4px;border-radius:50%;background:radial-gradient(circle,var(--h) 0%,var(--h) 22%,transparent 70%);filter:blur(8px);animation:br 6s ease-in-out infinite;animation-delay:var(--d,0s);transition:background .8s}
@@ -203,7 +203,7 @@ textarea.in{resize:none;line-height:1.5}
     <div class="f" style="text-align:center;transition-delay:.1s">
       <div class="dt" id="no"></div>
       <input class="in" id="nm" aria-label="Wish name" autocomplete="off">
-      <div class="imp" id="imp" aria-label="Importance"></div><div class="imp" style="margin-top:0"><small>how much do i want it</small></div>
+      <div class="impw"><div class="imp" id="imp" aria-label="Importance"></div><small>how much do i want it</small></div>
     </div>
     <div class="f" style="display:flex;gap:12px;justify-content:center;margin-bottom:24px;transition-delay:.16s">
       <button class="bt gd" id="gr"></button>
