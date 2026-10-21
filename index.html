@@ -333,13 +333,14 @@ function render(anim){const c=C();$('chv').innerHTML=c?ico('chev',10):ico('plus'
   if(anim)sc.animate([{opacity:0,transform:'translateX(40px)'},{opacity:1,transform:'none'}],{duration:600,easing:'cubic-bezier(.2,.9,.3,1)'})}
 const ov=$('ov'),cd=$('cd'),big=$('big');
 function loop(){if(!document.hidden){if(auto&&!paused&&!ov.classList.contains('o')){pos+=.45;if(pos>=W*2)pos-=W;sc.scrollLeft=pos}
-  const rr=sc.getBoundingClientRect(),cx=rr.left+rr.width/2;for(const e of its){const b=e.getBoundingClientRect(),d=Math.min(Math.abs(b.left+b.width/2-cx)/170,1);e.firstChild.style.transform=`scale(${(1.06-d*.26).toFixed(3)})`;e.style.opacity=(1-d*.4).toFixed(3)}}
+  const open=ov.classList.contains('o'),sl=sc.scrollLeft;if(!open&&(sl!==loop.l||its!==loop.i||innerWidth!==loop.w)){loop.l=sl;loop.i=its;loop.w=innerWidth;
+  const rr=sc.getBoundingClientRect(),cx=rr.left+rr.width/2;for(const e of its){const b=e.getBoundingClientRect(),d=Math.min(Math.abs(b.left+b.width/2-cx)/170,1);e.firstChild.style.transform=`scale(${(1.06-d*.26).toFixed(3)})`;e.style.opacity=(1-d*.4).toFixed(3)}}}
   requestAnimationFrame(loop)}
 const hold=()=>{paused=true;clearTimeout(tm)},rel=()=>{clearTimeout(tm);tm=setTimeout(()=>{pos=sc.scrollLeft;paused=false},2500)};
 ['pointerdown','touchstart'].forEach(v=>sc.addEventListener(v,hold,{passive:true}));
 ['pointerup','touchend','pointercancel'].forEach(v=>sc.addEventListener(v,rel,{passive:true}));
 sc.addEventListener('wheel',()=>{hold();rel()},{passive:true});
-let scT=0;sc.addEventListener('scroll',()=>{if(!paused||!auto)return;pos=sc.scrollLeft;clearTimeout(scT);scT=setTimeout(()=>{let p=sc.scrollLeft;if(p<W*.5)p+=W;else if(p>W*2.5)p-=W;else return;sc.scrollLeft=p;pos=p},180)},{passive:true});
+let scT=0;sc.addEventListener('scroll',()=>{if(!paused||!auto)return;pos=sc.scrollLeft;rel();clearTimeout(scT);scT=setTimeout(()=>{let p=sc.scrollLeft;if(p<W*.5)p+=W;else if(p>W*2.5)p-=W;else return;sc.scrollLeft=p;pos=p},180)},{passive:true});
 addEventListener('resize',()=>{if(auto){W=row.scrollWidth/3}});
 
 /* ---------- item card ---------- */
